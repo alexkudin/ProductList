@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,17 +49,17 @@ public class MainActivity extends ActionBarActivity
     private View dialogViewAddUpd;              	                            //  Dialog View
     private AlertDialog.Builder biulder;        	                            //  builder for Add && Update Dialog
     private LayoutInflater inflater;
-    private EditText tovarName;
-    private EditText tovarPrice;
-    private EditText tovarWeight;
+    private EditText productName;
+    private EditText productPrice;
+    private EditText productWeight;
     private Spinner spinnerCategory;
     private ArrayAdapter<String> adapterCategory;                               // Adapter used for Spinner Category
     private static boolean isUpdate = false;		                            // if Action in menu != Update
-    private static Tovar tmp;
+    private static Product tmp;
 
     private static File ExtStorDir = Environment.getExternalStorageDirectory(); // ---- getting path to ExternalStorageDirectory
     private static File F = new File(ExtStorDir,"products.txt");				// ---- creating file
-    private ArrayList<Tovar> allTovars = new ArrayList<>();						// ---- filling child Groups
+    private ArrayList<Product> allProducts = new ArrayList<>();					// ---- filling child Groups
 
 
     @Override
@@ -84,15 +82,15 @@ public class MainActivity extends ActionBarActivity
             {
                 while(FIS.available() > 0)
                 {
-                    Tovar tmpTovar = (Tovar)OIS.readObject();
+                    Product tmpProduct = (Product)OIS.readObject();
 
-                    if(tmpTovar instanceof Tovar)
+                    if(tmpProduct instanceof Product)
                     {
-                        allTovars.add(tmpTovar);
+                        allProducts.add(tmpProduct);
                     }
                     else
                     {
-                        System.out.println("Object not initialised " + tmpTovar.getClass().getName());
+                        System.out.println("Object not initialised " + tmpProduct.getClass().getName());
                     }
                 }
                 OIS.close();
@@ -126,9 +124,9 @@ public class MainActivity extends ActionBarActivity
         this.biulder            = new AlertDialog.Builder(this);
         this.inflater           = this.getLayoutInflater();
         this.dialogViewAddUpd   = inflater.inflate(R.layout.dialog_maket, null, false);
-        this.tovarName          = (EditText)this.dialogViewAddUpd.findViewById(R.id.etName);
-        this.tovarPrice         = (EditText)this.dialogViewAddUpd.findViewById(R.id.etPrice);
-        this.tovarWeight        = (EditText)this.dialogViewAddUpd.findViewById(R.id.etWeight);
+        this.productName        = (EditText)this.dialogViewAddUpd.findViewById(R.id.etName);
+        this.productPrice       = (EditText)this.dialogViewAddUpd.findViewById(R.id.etPrice);
+        this.productWeight      = (EditText)this.dialogViewAddUpd.findViewById(R.id.etWeight);
         this.spinnerCategory    = (Spinner)this.dialogViewAddUpd.findViewById(R.id.spnCategory);
         this.adapterCategory    = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arrGroups);
         this.spinnerCategory.setAdapter(this.adapterCategory);
@@ -143,13 +141,13 @@ public class MainActivity extends ActionBarActivity
         {
             ArrayList<Map<String,String>> childNode = new ArrayList<>(); // -- Collection of child products for Current Category
 
-            for(int j = 0 ; j < allTovars.size(); j++)
+            for(int j = 0 ; j < allProducts.size(); j++)
             {
-                if(allTovars.get(j).idCategory != i) continue;
+                if(allProducts.get(j).idCategory != i) continue;
                 /**
                  *	if Product found in current Category - add this Product
                  */
-                Tovar t = allTovars.get(j).cloneTovar();
+                Product t = allProducts.get(j).cloneProduct();
                 HashMap<String,String> HM = new HashMap<>();
                 HM.put(MainActivity.ELV_CHILD_KEY_NAME,t.name);
                 HM.put(MainActivity.ELV_CHILD_KEY_PRICE, t.price + "");
@@ -249,11 +247,12 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onClick(DialogInterface dialogInterface, int id)
             {
-                String name     = MainActivity.this.tovarName.getText().toString();
-                String price    = MainActivity.this.tovarPrice.getText().toString();
-                String weight   = MainActivity.this.tovarWeight.getText().toString();
+                String name     = MainActivity.this.productName.getText().toString();
+                String price    = MainActivity.this.productPrice.getText().toString();
+                String weight   = MainActivity.this.productWeight.getText().toString();
 
                 HashMap<String,String> tmpProduct = new HashMap<>();
+
                 tmpProduct.put(ELV_CHILD_KEY_NAME,name);
                 tmpProduct.put(ELV_CHILD_KEY_PRICE,price);
                 tmpProduct.put(ELV_CHILD_KEY_WEIGHT,weight);
@@ -280,9 +279,9 @@ public class MainActivity extends ActionBarActivity
                         childNodes.get(curGroupNew).add(curChildItem,tmpProduct);
                     }
                 }
-                tovarName.setText("");
-                tovarPrice.setText("");
-                tovarWeight.setText("");
+                productName.setText("");
+                productPrice.setText("");
+                productWeight.setText("");
                 adapter.notifyDataSetChanged();
                 ((ViewGroup)(dialogViewAddUpd.getParent())).removeAllViews();
             }
@@ -336,11 +335,12 @@ public class MainActivity extends ActionBarActivity
                     for(int j = 0 ; j < listOfCategory.size(); j++)
                     {
                         Map<String , String> HashMapProd = listOfCategory.get(j);
+
                         String ProductName  = HashMapProd.get(ELV_CHILD_KEY_NAME);
                         String ProductPrice = HashMapProd.get(ELV_CHILD_KEY_PRICE);
                         String ProductWeigt = HashMapProd.get(ELV_CHILD_KEY_WEIGHT);
 
-                        Tovar t = new Tovar(ProductName,Double.parseDouble(ProductPrice),Integer.parseInt(ProductWeigt),i);
+                        Product t = new Product(ProductName,Double.parseDouble(ProductPrice),Integer.parseInt(ProductWeigt),i);
                         OOS.writeObject(t);
                     }
                 }
@@ -374,7 +374,7 @@ public class MainActivity extends ActionBarActivity
             case R.id.action_add :
 
                 this.biulder.setView(this.dialogViewAddUpd);
-                this.biulder.setTitle("Add Tovar");
+                this.biulder.setTitle("Add Product");
                 this.spinnerCategory.setAdapter(this.adapterCategory);
                 isUpdate = false;
                 AlertDialog dialog1 = biulder.create();
@@ -398,11 +398,11 @@ public class MainActivity extends ActionBarActivity
                     String w = tmpProduct.get(ELV_CHILD_KEY_WEIGHT);
 
                     // -- set Old Name to EditText Field -
-                    this.tovarName.setText(n);
+                    this.productName.setText(n);
                     // -- set Old Price to EditText Field -
-                    this.tovarPrice.setText(p);
+                    this.productPrice.setText(p);
                     // -- set Old Weight to EditText Field -
-                    this.tovarWeight.setText(w);
+                    this.productWeight.setText(w);
                     // -- set Spinner to Current Category -
                     this.spinnerCategory.setSelection(curGroupItem);
 
@@ -458,13 +458,13 @@ public class MainActivity extends ActionBarActivity
 
     public void fillCollectionOfProducts()
     {
-         allTovars.add(new Tovar("Snickers",    4.75,   45,    Tovar.CATEGORY_CHOCO));
-         allTovars.add(new Tovar("Mars",        5.15,   50,    Tovar.CATEGORY_CHOCO));
-         allTovars.add(new Tovar("CocaCola",    9.90, 1000,    Tovar.CATEGORY_BEVERAGES));
-         allTovars.add(new Tovar("Apple",      18.50, 1000,    Tovar.CATEGORY_FRUITS));
-         allTovars.add(new Tovar("Orange",     45.00, 1000,    Tovar.CATEGORY_FRUITS));
-         allTovars.add(new Tovar("Bounty",      8.75,   80,    Tovar.CATEGORY_CHOCO));
-         allTovars.add(new Tovar("Fanta",      11.30,  500,    Tovar.CATEGORY_BEVERAGES));
-         allTovars.add(new Tovar("Beer",       14.30,  500,    Tovar.CATEGORY_BEVERAGES));
+         allProducts.add(new Product("Snickers",    4.75,   45,     Product.CATEGORY_CHOCO));
+         allProducts.add(new Product("Mars",        5.15,   50,     Product.CATEGORY_CHOCO));
+         allProducts.add(new Product("CocaCola",    9.90,   1000,   Product.CATEGORY_BEVERAGES));
+         allProducts.add(new Product("Apple",       18.50,  1000,   Product.CATEGORY_FRUITS));
+         allProducts.add(new Product("Orange",      45.00,  1000,   Product.CATEGORY_FRUITS));
+         allProducts.add(new Product("Bounty",      8.75,   80,     Product.CATEGORY_CHOCO));
+         allProducts.add(new Product("Fanta",       11.30,  500,    Product.CATEGORY_BEVERAGES));
+         allProducts.add(new Product("Beer",        14.30,  500,    Product.CATEGORY_BEVERAGES));
     }
 }
