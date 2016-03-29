@@ -31,47 +31,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-class	Tovar implements Serializable
-{
-    // ----- Class constants -----------------------------------------------
-    /**
-     * Category Fruits
-     */
-    public final	static	int	CATEGORY_FRUITS		= 0;
-    /**
-     * Category Chocos
-     */
-    public final	static	int	CATEGORY_CHOCO		= 1;
-    /**
-     * Category Beverages
-     */
-    public final	static	int	CATEGORY_BEVERAGES	= 2;
-
-    // ----- Class members -------------------------------------------------
-    public					String		name;
-    public					double		price;
-    public 					int			weight;
-    public 					int			idCategory;
-
-    // ----- Class methods -------------------------------------------------
-    public Tovar(String name, double price, int weight, int idCat)
-    {
-        this.name		= name;
-        this.price		= price;
-        this.weight		= weight;
-        this.idCategory	= idCat;
-    }
-
-    public Tovar	cloneTovar()
-    {
-        return	new Tovar(this.name, this.price, this.weight, this.idCategory);
-    }
-    public String toString()
-    {
-        return this.name + "|" + this.price + "^" + this.weight + "!" + this.idCategory + "\r\n";
-    }
-}
-
 public class MainActivity extends ActionBarActivity
 {
     private final static String ELV_PARENT_KEY          = "parentKey";        // Key for PARENT Groups
@@ -105,12 +64,13 @@ public class MainActivity extends ActionBarActivity
     private ArrayList<Tovar> allTovars = new ArrayList<>();						// ---- filling child Groups
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //this.fillCollectionOfProducts();
 
         /**
          * 	------ restore from File ---------------
@@ -175,17 +135,6 @@ public class MainActivity extends ActionBarActivity
         this.biulder.setView(this.dialogViewAddUpd);
 
         this.ELV = (ExpandableListView)this.findViewById(R.id.elvOne);
-/**
- // filling collection of Products
- allTovars.add(new Tovar("Snickers",    4.75,   45,    Tovar.CATEGORY_CHOCO));
- allTovars.add(new Tovar("Mars",        5.15,   50,    Tovar.CATEGORY_CHOCO));
- allTovars.add(new Tovar("CocaCola",    9.90, 1000,    Tovar.CATEGORY_BEVERAGES));
- allTovars.add(new Tovar("Apple",      18.50, 1000,    Tovar.CATEGORY_FRUITS));
- allTovars.add(new Tovar("Orange",     45.00, 1000,    Tovar.CATEGORY_FRUITS));
- allTovars.add(new Tovar("Bounty",      8.75,   80,    Tovar.CATEGORY_CHOCO));
- allTovars.add(new Tovar("Fanta",      11.30,  500,    Tovar.CATEGORY_BEVERAGES));
- allTovars.add(new Tovar("Beer",       14.30,  500,    Tovar.CATEGORY_BEVERAGES));
- */
 
         /**
          *	------  filling ExpandableListView ----------------
@@ -504,5 +453,18 @@ public class MainActivity extends ActionBarActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void fillCollectionOfProducts()
+    {
+         allTovars.add(new Tovar("Snickers",    4.75,   45,    Tovar.CATEGORY_CHOCO));
+         allTovars.add(new Tovar("Mars",        5.15,   50,    Tovar.CATEGORY_CHOCO));
+         allTovars.add(new Tovar("CocaCola",    9.90, 1000,    Tovar.CATEGORY_BEVERAGES));
+         allTovars.add(new Tovar("Apple",      18.50, 1000,    Tovar.CATEGORY_FRUITS));
+         allTovars.add(new Tovar("Orange",     45.00, 1000,    Tovar.CATEGORY_FRUITS));
+         allTovars.add(new Tovar("Bounty",      8.75,   80,    Tovar.CATEGORY_CHOCO));
+         allTovars.add(new Tovar("Fanta",      11.30,  500,    Tovar.CATEGORY_BEVERAGES));
+         allTovars.add(new Tovar("Beer",       14.30,  500,    Tovar.CATEGORY_BEVERAGES));
     }
 }
