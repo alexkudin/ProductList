@@ -19,7 +19,6 @@ import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,37 +32,96 @@ import java.util.Map;
 
 public class MainActivity extends ActionBarActivity
 {
-    private final static String ELV_PARENT_KEY          = "parentKey";        // Key for PARENT Groups
-    private final static String ELV_CHILD_KEY_NAME      = "childKeyName";     // Key for child Groups - product Name
-    private final static String ELV_CHILD_KEY_PRICE     = "childKeyPrice";    // Key for child Groups - product Price
-    private final static String ELV_CHILD_KEY_WEIGHT    = "childKeyWeight";   // Key for child Groups - product Weight
+    /**
+     *  Key for PARENT Groups
+     */
+    private final static    String          ELV_PARENT_KEY          = "parentKey";    
+    
+    /**
+     *  Key for child Groups - product Name
+     */
+    private final static    String          ELV_CHILD_KEY_NAME      = "childKeyName";   
+    
+    /**
+     *  Key for child Groups - product Price
+     */
+    private final static    String          ELV_CHILD_KEY_PRICE     = "childKeyPrice"; 
+    
+    /**
+     *  Key for child Groups - product Weight
+     */
+    private final static    String          ELV_CHILD_KEY_WEIGHT    = "childKeyWeight";   
 
-    private ArrayList<View> allViews = new ArrayList<>();
-    private int curGroupItem = -1;
-    private int curChildItem = -1;
+    private ArrayList<View> allViews        = new ArrayList<>();
+    private int             curGroupItem    = -1;
+    private int             curChildItem    = -1;
 
-    private ExpandableListView ELV;		       		                            // ExpandableListView - list of categories and items belonging to them
-    private SimpleExpandableListAdapter adapter;	                            // Adapter for this List
+    /**
+     *  ExpandableListView - list of categories and items belonging to them
+     */
+    private ExpandableListView              ELV;	
+    
+    /**
+     *  Adapter for ExpandableListView
+     */
+    private SimpleExpandableListAdapter      adapter;	                           
 
-    private ArrayList<Map<String,String>>            parentNodes = new ArrayList<>();   // List of parent Nodes
-    private ArrayList<ArrayList<Map<String,String>>> childNodes  = new ArrayList<>();   // List Child Nodes
+    /**
+     *  List of parent Nodes
+     */
+    private ArrayList<Map<String,String>>               parentNodes = new ArrayList<>();  
+    
+    /**
+     *  List Child Nodes
+     */
+    private ArrayList<ArrayList<Map<String,String>>>    childNodes  = new ArrayList<>(); 
+    
+    /**
+     *  Filling child Groups
+     */
+    private ArrayList<Tovar>                            allTovars   = new ArrayList<>();		
 
-    private View dialogViewAddUpd;              	                            //  Dialog View
-    private AlertDialog.Builder biulder;        	                            //  builder for Add && Update Dialog
-    private LayoutInflater inflater;
-    private EditText tovarName;
-    private EditText tovarPrice;
-    private EditText tovarWeight;
-    private Spinner spinnerCategory;
-    private ArrayAdapter<String> adapterCategory;                               // Adapter used for Spinner Category
-    private static boolean isUpdate = false;		                            // if Action in menu != Update
-    private static Tovar tmp;
+    /**
+     *  Dialog View for Action Ading the current Item & Action Update the current Item
+     */
+    private View                    dialogViewAddUpd;              	                              
+    
+    /**
+     *  Builder for Dialog View for Action Adding the current Item & Action Update the current Item
+     */
+    private AlertDialog.Builder     biulder;        	                           
+    private LayoutInflater          inflater;
+    
+    /**
+     *  Fields o the Dialog View for Action Adding the current Item & Action Update the current Item
+     */
+    private EditText                tovarName;
+    private EditText                tovarPrice;
+    private EditText                tovarWeight;
+    private Spinner                 spinnerCategory;
+    
+    /**
+     *  Adapter used for Spinner Category
+     */
+    private ArrayAdapter<String> adapterCategory;                              
+    
+    /**
+     *  Boolean variable 
+     *  returnes true if Action in menu == Action Update the current Item
+     */
+    private static boolean  isUpdate    = false;		                           
+    private static Tovar    tmp;
 
-    private static File ExtStorDir = Environment.getExternalStorageDirectory(); // ---- getting path to ExternalStorageDirectory
-    private static File F = new File(ExtStorDir,"products.txt");				// ---- creating file
-    private ArrayList<Tovar> allTovars = new ArrayList<>();						// ---- filling child Groups
-
-
+    /**
+     *  Path to ExternalStorageDirectory for saving data
+     */
+    private static File     ExtStorDir  = Environment.getExternalStorageDirectory(); 
+    
+    /**
+     *  Creating file for saving data on ExternalStorageDirectory
+     */
+    private static File     F           = new File(ExtStorDir,"products.txt");			
+    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -73,7 +131,7 @@ public class MainActivity extends ActionBarActivity
         //this.fillCollectionOfProducts();
 
         /**
-         * 	------ restore from File ---------------
+         * 	Restore Data from File 
          */
         try
         {
@@ -109,7 +167,7 @@ public class MainActivity extends ActionBarActivity
 
 
         /**
-         *	------  filling parent Groups -------------------------
+         *	Filling parent Groups
          */
         String[] arrGroups = {"Fruits" , "Chocos" , "Beverages"};
 
@@ -121,7 +179,7 @@ public class MainActivity extends ActionBarActivity
         }
 
         /**
-         *	------  initializing dialog Window && etc ---------------
+         *	Initializing dialog view && etc
          */
         this.biulder            = new AlertDialog.Builder(this);
         this.inflater           = this.getLayoutInflater();
@@ -137,11 +195,14 @@ public class MainActivity extends ActionBarActivity
         this.ELV = (ExpandableListView)this.findViewById(R.id.elvOne);
 
         /**
-         *	------  filling ExpandableListView ----------------
+         *	Filling ExpandableListView 
          */
         for(int i = 0; i < parentNodes.size() ;i++)
         {
-            ArrayList<Map<String,String>> childNode = new ArrayList<>(); // -- Collection of child products for Current Category
+            /**
+             *  Collection of child products for Current Category
+             */
+            ArrayList<Map<String,String>> childNode = new ArrayList<>(); 
 
             for(int j = 0 ; j < allTovars.size(); j++)
             {
@@ -191,18 +252,18 @@ public class MainActivity extends ActionBarActivity
 
                 if(MainActivity.this.curGroupItem == groupPosition && MainActivity.this.curChildItem == childPosition)
                 {
-                    // --  Setting Item Selected -
+                    // Setting Item Selected
                     cb.setChecked(true);
                     view.setBackgroundColor(Color.CYAN);
                 }
                 else
                 {
-                    // --  DisSelect Item  -
+                    // DisSelect Item
                     cb.setChecked(false);
                     view.setBackgroundColor(Color.rgb(0xe4,0xe2,0x84));
                 }
 
-                // -- remember Link to Vidjet to collection -
+                // remember Link to Vidjet to collection -
                 if(MainActivity.this.allViews.contains(view) == false)
                 {
                     MainActivity.this.allViews.add(view);
@@ -219,7 +280,7 @@ public class MainActivity extends ActionBarActivity
             @Override
             public boolean onChildClick(ExpandableListView parent, View view, int groupPosition, int childPosition, long id)
             {
-                // --  set all Vidgets color -
+                // set color to all Vidgets 
                 for(View V : MainActivity.this.allViews )
                 {
                     CheckBox cbA = (CheckBox) V.findViewById(R.id.cb1);
@@ -227,22 +288,22 @@ public class MainActivity extends ActionBarActivity
                     V.setBackgroundColor(Color.rgb(0xe4,0xe2,0x84));
                 }
 
-                // -- remember current selected element -
+                // remember current selected element 
                 MainActivity.this.curGroupItem = groupPosition;
                 MainActivity.this.curChildItem = childPosition;
 
-                // -- setting flag to Checkbox -
+                // setting flag to Checkbox 
                 CheckBox cb = (CheckBox)view.findViewById(R.id.cb1);
                 cb.setChecked(true);
 
-                // -- current Vidget - element of list is highlighted  -
+                // current Vidget - element of list is highlighted 
                 view.setBackgroundColor(Color.rgb(0x93,0xca,0xf1));
                 return true;
             }
         });
 
         /**
-         *	Actions of Positive & Negative buttons of dialog
+         *	Actions for Positive & Negative buttons of dialog view
          */
         this.biulder.setPositiveButton("Ok", new DialogInterface.OnClickListener()
         {
@@ -269,10 +330,13 @@ public class MainActivity extends ActionBarActivity
                 }
                 else
                 {
-                    if(curGroupNew != curGroupItem)	 						    // -- if categories of Product is not match -
+                    // if categories of Product is not match 
+                    if(curGroupNew != curGroupItem)	 						    
                     {
-                        childNodes.get(curGroupItem).remove(curChildItem);	    // -- from old category -
-                        childNodes.get(curGroupNew).add(tmpProduct);		    // -- to new category -
+                         // from old category
+                        childNodes.get(curGroupItem).remove(curChildItem);
+                        // to new category 
+                        childNodes.get(curGroupNew).add(tmpProduct);		    
                     }
                     else
                     {
@@ -297,13 +361,12 @@ public class MainActivity extends ActionBarActivity
             }
         });
 
-        // -- setting Adapter to ELV -
         this.ELV.setAdapter(adapter);
     }
 
 
     /**
-     *    check for Writing to external storage
+     *  Check Available for Writing to external storage
      */
     private boolean isExstStorageAvailableForWriting()
     {
@@ -313,7 +376,7 @@ public class MainActivity extends ActionBarActivity
 
 
     /**
-     *	------ save to File ----------------
+     *  Save Data to the File
      */
     @Override
     protected void onPause()
@@ -327,10 +390,10 @@ public class MainActivity extends ActionBarActivity
                 FileOutputStream    FOS = new FileOutputStream(F);
                 ObjectOutputStream  OOS = new ObjectOutputStream(FOS);
 
-                // ------  for all categories ------------------------------------
+                // for all categories 
                 for(int i = 0; i< childNodes.size() ;i++)
                 {
-                    //----- for all Products -------------------------------------
+                    // for all Products 
                     ArrayList<Map<String , String>> listOfCategory = childNodes.get(i);
 
                     for(int j = 0 ; j < listOfCategory.size(); j++)
@@ -365,12 +428,13 @@ public class MainActivity extends ActionBarActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-
         int id = item.getItemId();
 
         switch(id)
         {
-            // -- A D D -
+            /**
+             * Action Adding a new Item
+             */
             case R.id.action_add :
 
                 this.biulder.setView(this.dialogViewAddUpd);
@@ -382,7 +446,9 @@ public class MainActivity extends ActionBarActivity
 
                 return true;
 
-            // -- U P D A T E -
+            /**
+             * Action Update current Item
+             */
             case R.id.action_upd :
 
                 isUpdate     = true;
@@ -415,8 +481,9 @@ public class MainActivity extends ActionBarActivity
                 }
                 return true;
 
-
-            // -- D E L E T E -
+            /**
+             * Action Delete the current Item
+             */
             case R.id.action_del :
 
                 if(curChildItem != -1)
@@ -454,7 +521,6 @@ public class MainActivity extends ActionBarActivity
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     public void fillCollectionOfProducts()
     {
