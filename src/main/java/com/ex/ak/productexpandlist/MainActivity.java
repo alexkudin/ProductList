@@ -103,24 +103,24 @@ public class MainActivity extends ActionBarActivity
     /**
      *  Adapter used for Spinner Category
      */
-    private ArrayAdapter<String> adapterCategory;                              
+    private ArrayAdapter<String>    adapterCategory;                              
     
     /**
      *  Boolean variable 
      *  returnes true if Action in menu == Action Update the current Item
      */
-    private static boolean  isUpdate    = false;		                           
-    private static Tovar    tmp;
+    private static boolean          isUpdate    = false;		                           
+    private static Tovar            tmp;
 
     /**
      *  Path to ExternalStorageDirectory for saving data
      */
-    private static File     ExtStorDir  = Environment.getExternalStorageDirectory(); 
+    private static File             ExtStorDir  = Environment.getExternalStorageDirectory(); 
     
     /**
      *  Creating file for saving data on ExternalStorageDirectory
      */
-    private static File     F           = new File(ExtStorDir,"products.txt");			
+    private static File             F           = new File(ExtStorDir,"products.txt");			
     
     @Override
     protected void onCreate(Bundle savedInstanceState)
