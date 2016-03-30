@@ -303,7 +303,7 @@ public class MainActivity extends ActionBarActivity
 
 
     /**
-     *   ----- check for Writing to external storage
+     *    check for Writing to external storage
      */
     private boolean isExstStorageAvailableForWriting()
     {
