@@ -23,6 +23,7 @@ class Product implements Serializable
     public					double		price;
     public 					int			weight;
     public 					int			idCategory;
+    
 
     // ----- Class methods -------------------------------------------------
     public Product(String name, double price, int weight, int idCat)
